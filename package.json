@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/takonomura/issue2todoist/issues"
   },
-  "homepage": "https://github.com/takonomura/issue2todoist#readme"
+  "homepage": "https://github.com/takonomura/issue2todoist#readme",
+  "dependencies": {
+    "probot": "^7.2.0"
+  }
 }
