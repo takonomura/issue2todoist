@@ -1,0 +1,24 @@
+{
+  "name": "issue2todoist",
+  "version": "1.0.0",
+  "description": "GitHub App to create the task for the issue to Todoist automatically.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/takonomura/issue2todoist.git"
+  },
+  "keywords": [
+    "github-app",
+    "cloud-functions",
+    "todoist"
+  ],
+  "author": "takonomura",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/takonomura/issue2todoist/issues"
+  },
+  "homepage": "https://github.com/takonomura/issue2todoist#readme"
+}
