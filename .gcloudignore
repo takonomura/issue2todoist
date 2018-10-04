@@ -1,3 +1,4 @@
+.gitignore
+README.md
 node_modules
 private-key.pem
-config.json
