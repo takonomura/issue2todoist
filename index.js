@@ -1,7 +1,38 @@
+const https = require('https');
+const querystring = require('querystring');
 const { createProbot } = require('probot');
 const verify = require('@octokit/webhooks/verify');
 
 const config = require('./config.json');
+
+function addTask(content, project) {
+  return new Promise((resolve, reject) => {
+    const body = querystring.stringify({ content: content, project_id: project });
+    const options = {
+      host: 'todoist.com',
+      path: '/api/v7/items/add',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${config.access_token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': body.length.toString(),
+      },
+    }
+
+    const req = https.request(options, res => {
+      let data = '';
+      res.setEncoding('utf8');
+      res.on('error', reject);
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(data) }));
+    });
+
+    req.on('error', reject);
+
+    req.write(body);
+    req.end();
+  });
+}
 
 function buildProbot() {
   const probot = createProbot({
@@ -11,9 +42,16 @@ function buildProbot() {
   });
   probot.load(app => {
     app.on('issues.opened', async ctx => {
-      console.log('New issues received:');
-      console.log(ctx.payload.issue.title);
-      console.log(ctx.payload.issue.html_url);
+      const projectID = config.repos[ctx.payload.repository.full_name];
+      if (!projectID) {
+        console.error(`Unknown repository: ${ctx.payload.repository.full_name}`);
+        return;
+      }
+      const result = addTask(`${ctx.payload.issue.title} ${ctx.payload.issue.html_url}`, projectID);
+      if (result.status !== 200) {
+        console.error(`Todoist returns status code ${result.status}`);
+        console.error('Response: ' + JSON.stringify(result.body));
+      }
     });
   });
   return probot;
